@@ -2,7 +2,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import fs from "fs";
 import mime from "mime-types";
 import multiparty from "multiparty";
-const bucketName = "ecommerce-merkasin-app";
+const bucketName = "ecommerce-merkasin";
 
 export default async function handler(req, res) {
   const form = new multiparty.Form();
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
   for (const file of files.file) {
     const ext = file.originalFilename.split(".").pop();
     const newFileName = Date.now() + "." + ext;
-    client.send(
+    await client.send(
       new PutObjectCommand({
         Bucket: bucketName,
         Key: newFileName,
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         ContentType: mime.lookup(file.path),
       })
     );
-    const link = `https://${bucketName}.s3.amazonaws.com/${newFileName}`;
+    const link = `https://${bucketName}.s3.ap-south-1.amazonaws.com/${newFileName}`;
     links.push(link);
   }
 

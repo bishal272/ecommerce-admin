@@ -7,16 +7,17 @@ export default function ProductForm({
   title: existingTitle,
   description: existingDesc,
   price: existingPrice,
-  images,
+  images: existingImages,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDesc || "");
   const [price, setPrice] = useState(existingPrice || "");
   const [goToProducts, setGoToProducts] = useState(false);
+  const [images, setImages] = useState(existingImages || []);
   const router = useRouter();
   const saveProduct = async (ev) => {
     ev.preventDefault();
-    const data = { title, description, price };
+    const data = { title, description, price, images };
     if (_id) {
       //update
       await axios.put("/api/products", { ...data, _id });
@@ -36,8 +37,10 @@ export default function ProductForm({
       for (const file of files) {
         data.append("file", file);
       }
-      const res = fetch("/api/upload", { method: "POST", body: data });
-      console.log(res);
+      const res = await axios.post("/api/upload", data);
+      setImages((oldImages) => {
+        return [...oldImages, ...res.data.links];
+      });
     }
   };
   return (
@@ -50,7 +53,13 @@ export default function ProductForm({
         onChange={(ev) => setTitle(ev.target.value)}
       />
       <label>Photos</label>
-      <div className="mb-2">
+      <div className="mb-2 flex flex-wrap gap-2">
+        {!!images.length &&
+          images.map((link) => (
+            <div key={link} className="h-24">
+              <img src={link} alt="" />
+            </div>
+          ))}
         <label className="w-24 h-24  flex justify-center items-center text-sm text-gray-500 gap-1 rounded-lg bg-gray-200 cursor-pointer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
