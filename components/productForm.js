@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { ReactSortable } from "react-sortablejs";
+import { BounceLoader } from "react-spinners";
 
 export default function ProductForm({
   _id,
@@ -14,6 +16,7 @@ export default function ProductForm({
   const [price, setPrice] = useState(existingPrice || "");
   const [goToProducts, setGoToProducts] = useState(false);
   const [images, setImages] = useState(existingImages || []);
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
   const saveProduct = async (ev) => {
     ev.preventDefault();
@@ -33,6 +36,7 @@ export default function ProductForm({
   const uploadImages = async (ev) => {
     const files = ev.target?.files;
     if (files?.length > 0) {
+      setIsUploading(true);
       const data = new FormData();
       for (const file of files) {
         data.append("file", file);
@@ -41,8 +45,12 @@ export default function ProductForm({
       setImages((oldImages) => {
         return [...oldImages, ...res.data.links];
       });
+      setIsUploading(false);
     }
   };
+  function updateImagesOrder(images) {
+    setImages(images);
+  }
   return (
     <form onSubmit={saveProduct}>
       <label>Product Name</label>
@@ -54,12 +62,19 @@ export default function ProductForm({
       />
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-2">
-        {!!images.length &&
-          images.map((link) => (
-            <div key={link} className="h-24">
-              <img src={link} alt="" />
-            </div>
-          ))}
+        <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap">
+          {!!images.length &&
+            images.map((link) => (
+              <div key={link} className="h-24">
+                <img src={link} alt="" />
+              </div>
+            ))}
+        </ReactSortable>
+        {isUploading && (
+          <div className="h-24  flex items-center ">
+            <BounceLoader color="#36d7b7" />
+          </div>
+        )}
         <label className="w-24 h-24  flex justify-center items-center text-sm text-gray-500 gap-1 rounded-lg bg-gray-200 cursor-pointer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +93,6 @@ export default function ProductForm({
           {/* to open file choser use input with type file and make it hidden to hide the button */}
           <input type="file" className="hidden" onChange={uploadImages} />
         </label>
-        {!images?.length && <div>No photos in this product</div>}
       </div>
       <label>Product description</label>
       <textarea
