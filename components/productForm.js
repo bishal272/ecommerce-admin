@@ -1,6 +1,7 @@
 import axios from "axios";
+import mongoose from "mongoose";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { BounceLoader } from "react-spinners";
 
@@ -10,6 +11,7 @@ export default function ProductForm({
   description: existingDesc,
   price: existingPrice,
   images: existingImages,
+  category: assignedCategory,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDesc || "");
@@ -17,10 +19,17 @@ export default function ProductForm({
   const [goToProducts, setGoToProducts] = useState(false);
   const [images, setImages] = useState(existingImages || []);
   const [isUploading, setIsUploading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [category, setcategory] = useState(assignedCategory || "");
   const router = useRouter();
+  useEffect(() => {
+    axios.get("/api/categories").then((res) => {
+      setCategories(res.data);
+    });
+  }, []);
   const saveProduct = async (ev) => {
     ev.preventDefault();
-    const data = { title, description, price, images };
+    const data = { title, description, price, images, category };
     if (_id) {
       //update
       await axios.put("/api/products", { ...data, _id });
@@ -60,6 +69,13 @@ export default function ProductForm({
         value={title}
         onChange={(ev) => setTitle(ev.target.value)}
       />
+      <label>Category</label>
+      <select value={category} onChange={(ev) => setcategory(ev.target.value)}>
+        <option value={new mongoose.Types.ObjectId("41224d776a326fb40f000001")}>
+          Uncategorized
+        </option>
+        {categories.length > 0 && categories.map((c) => <option value={c._id}>{c.name}</option>)}
+      </select>
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-2">
         <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap">
