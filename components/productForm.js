@@ -1,5 +1,4 @@
 import axios from "axios";
-import mongoose from "mongoose";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
@@ -12,6 +11,7 @@ export default function ProductForm({
   price: existingPrice,
   images: existingImages,
   category: assignedCategory,
+  properties: assignedProperties,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDesc || "");
@@ -21,6 +21,7 @@ export default function ProductForm({
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [category, setcategory] = useState(assignedCategory || "");
+  const [productProperties, setProductProperties] = useState(assignedProperties || {});
   const router = useRouter();
   useEffect(() => {
     axios.get("/api/categories").then((res) => {
@@ -29,7 +30,7 @@ export default function ProductForm({
   }, []);
   const saveProduct = async (ev) => {
     ev.preventDefault();
-    const data = { title, description, price, images, category };
+    const data = { title, description, price, images, category, properties: productProperties };
     if (_id) {
       //update
       await axios.put("/api/products", { ...data, _id });
@@ -60,6 +61,23 @@ export default function ProductForm({
   function updateImagesOrder(images) {
     setImages(images);
   }
+  const propertiesToFill = [];
+  if (categories.length > 0 && category) {
+    let catInfo = categories.find(({ _id }) => _id === category);
+    propertiesToFill.push(...catInfo.properties);
+    while (catInfo?.parent?._id) {
+      const parentCat = categories.find(({ _id }) => _id === catInfo?.parent?._id);
+      propertiesToFill.push(...parentCat.properties);
+      catInfo = parentCat;
+    }
+  }
+  function setProductProp(propName, value) {
+    setProductProperties((prev) => {
+      const newProductProps = { ...prev };
+      newProductProps[propName] = value;
+      return newProductProps;
+    });
+  }
   return (
     <form onSubmit={saveProduct}>
       <label>Product Name</label>
@@ -71,11 +89,22 @@ export default function ProductForm({
       />
       <label>Category</label>
       <select value={category} onChange={(ev) => setcategory(ev.target.value)}>
-        <option value={new mongoose.Types.ObjectId("41224d776a326fb40f000001")}>
-          Uncategorized
-        </option>
+        <option value={""}>Uncategorized</option>
         {categories.length > 0 && categories.map((c) => <option value={c._id}>{c.name}</option>)}
       </select>
+      {propertiesToFill.length > 0 &&
+        propertiesToFill.map((p) => (
+          <div className="flex gap-1">
+            <div>{p.name}</div>
+            <select
+              value={productProperties[p.name]}
+              onChange={(ev) => setProductProp(p.name, ev.target.value)}>
+              {p.values.map((v) => (
+                <option value={v}>{v}</option>
+              ))}
+            </select>
+          </div>
+        ))}
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-2">
         <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap">
