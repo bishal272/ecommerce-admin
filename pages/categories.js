@@ -138,7 +138,7 @@ function Categories({ swal }) {
                   value={property.values}
                   onChange={(ev) => handlePropertyValueChange(index, property, ev.target.value)}
                 />
-                <button className="btn-default" onClick={() => removeProperty(index)} type="button">
+                <button className="btn-red" onClick={() => removeProperty(index)} type="button">
                   Remove
                 </button>
               </div>
@@ -181,7 +181,7 @@ function Categories({ swal }) {
                   <td>{category?.parent?.name}</td>
                   <td className="flex items-center justify-center text-sm">
                     <button
-                      className="btn-primary mr-1 flex"
+                      className="btn-default  mr-1 flex"
                       onClick={() => editCategory(category)}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +198,7 @@ function Categories({ swal }) {
                       </svg>
                       Edit
                     </button>
-                    <button className="btn-primary flex" onClick={() => deleteCategory(category)}>
+                    <button className="btn-red flex" onClick={() => deleteCategory(category)}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
