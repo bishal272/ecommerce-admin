@@ -18,7 +18,7 @@ export default function Nav({ show }) {
     <aside
       className={
         (show ? "left-0" : "-left-full") +
-        " top-0 text-gray-500 p-4 fixed w-full h-full bg-bgGray -left-full md:static md:w-auto md:h-auto transition-all"
+        " top-0 text-white p-4 fixed w-full h-full bg-gray-900 -left-full md:static md:w-auto md:h-auto transition-all"
       }>
       <div className="mb-4 mr-4">
         <Logo />

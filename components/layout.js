@@ -9,7 +9,8 @@ export default function Layout({ children }) {
 
   if (!session) {
     return (
-      <div className="bg-bgGray w-screen h-screen flex items-center">
+      <div className="bg-black w-screen h-screen flex items-center flex-col justify-center ">
+        <h1 className="text-white mb-10">Ecommerce Admin Panel</h1>
         <div className="text-center w-full">
           <button
             className="bg-white p-2 text-black rounded-lg px-4 shadow-md border border-gray-200 inline-flex items-center gap-2"
@@ -41,7 +42,7 @@ export default function Layout({ children }) {
     );
   }
   return (
-    <div className="bg-bgGray min-h-screen ">
+    <div className="bg-gray-200 min-h-screen ">
       <div className="flex items-center p-4 md:hidden">
         <button onClick={() => setShowNav(true)}>
           <svg

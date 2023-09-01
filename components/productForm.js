@@ -156,7 +156,17 @@ export default function ProductForm({
         value={price}
         onChange={(ev) => setPrice(ev.target.value)}
       />
-      <button className="btn-primary">Save</button>
+      <div className="flex gap-2">
+        <button className="btn-primary">Save</button>
+        <button
+          className="btn-default"
+          type="button"
+          onClick={() => {
+            router.push("/products");
+          }}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 }

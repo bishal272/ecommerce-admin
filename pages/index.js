@@ -6,16 +6,18 @@ export default function index() {
 
   return (
     <Layout>
-      <div className="text-blue-900 flex justify-between">
-        <h2>
-          Hello,<b>{session?.user.name}</b>
-        </h2>
+      <div className="text-blue-900 flex justify-between items-center">
+        <h1>Overview</h1>
 
-        <div className="flex bg-gray-300 gap-1 text-black rounded-lg overflow-hidden">
-          <img src={session?.user.image} alt="" className="flex  w-6 h-6" />
-          <span className="px-2">{session?.user.name}</span>
+        <div className="flex flex-col bg-gray-300 gap-1 text-black rounded-full overflow-hidden w-14">
+          <img src={session?.user.image} alt="" className="" />
+          {/* <span className="px-2">{session?.user.name}</span> */}
         </div>
       </div>
+      <div className="border border-b border-gray-500 my-2"></div>
+      <h2>
+        Hello,<b>{session?.user.name}</b>
+      </h2>
     </Layout>
   );
 }
