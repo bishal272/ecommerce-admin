@@ -78,6 +78,13 @@ export default function ProductForm({
       return newProductProps;
     });
   }
+  const deleteImage = (index) => {
+    setImages((prev) => {
+      return [...prev].filter((p, i) => {
+        return i != index;
+      });
+    });
+  };
   return (
     <form onSubmit={saveProduct}>
       <label>Product Name</label>
@@ -111,11 +118,28 @@ export default function ProductForm({
       <div className="mb-2 flex flex-wrap gap-2">
         <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap gap-1">
           {!!images.length &&
-            images.map((link) => (
+            images.map((link, index) => (
               <div
                 key={link}
                 className="h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200">
                 <img src={link} alt="" />
+                <div className="float-right -mt-1 -mr-4">
+                  <button className="" onClick={() => deleteImage(index)}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             ))}
         </ReactSortable>
